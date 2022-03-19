@@ -10,18 +10,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myRobot;
   private Joystick m_leftStick;
   private Joystick m_rightStick;
-  private static final int leftDeviceID = 1; 
-  private static final int rightDeviceID = 2;
-  private CANSparkMax m_leftMotor;
-  private CANSparkMax m_rightMotor;
+  //private static final int leftDeviceID = 1; 
+  //private static final int rightDeviceID = 2;
+  private Spark m_leftMotor;
+  private Spark m_rightMotor;
 
   @Override
   public void robotInit() {
@@ -38,16 +36,8 @@ public class Robot extends TimedRobot {
    * The example below initializes four brushless motors with CAN IDs 1 and 2. Change
    * these parameters to match your setup
    */
-    m_leftMotor = new CANSparkMax(leftDeviceID, MotorType.kBrushless);
-    m_rightMotor = new CANSparkMax(rightDeviceID, MotorType.kBrushless);
-
-    /**
-     * The RestoreFactoryDefaults method can be used to reset the configuration parameters
-     * in the SPARK MAX to their factory default state. If no argument is passed, these
-     * parameters will not persist between power cycles
-     */
-    m_leftMotor.restoreFactoryDefaults();
-    m_rightMotor.restoreFactoryDefaults();
+    m_leftMotor = new Spark(0);
+    m_rightMotor = new Spark(2);
 
     m_myRobot = new DifferentialDrive(m_leftMotor, m_rightMotor);
 
