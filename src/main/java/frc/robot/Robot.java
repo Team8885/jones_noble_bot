@@ -10,24 +10,35 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myDrive;
   private XboxController m_joyStick;
-  private Spark m_leftMotor;
-  private Spark m_rightMotor;
+  private Spark m_frontLeftMotor;
+  private Spark m_rearLeftMotor;
+  private Spark m_frontRightMotor;
+  private Spark m_rearRightMotor;
+  private MotorControllerGroup m_leftGroupMotor;
+  private MotorControllerGroup m_rightGroupMotor;
 
   @Override
   public void robotInit() {
   
-    m_leftMotor  = new Spark(0);
-    m_rightMotor = new Spark(2);
+    m_frontLeftMotor  = new Spark(0);
+    m_rearLeftMotor   = new Spark(1);
+    m_frontRightMotor = new Spark(2);
+    m_rearRightMotor  = new Spark(3);
+
+    m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
+    m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. For our gearbox and chassis 
     // orientation, we need to invert the left side.
-    m_leftMotor.setInverted(true);
-    m_myDrive    = new DifferentialDrive(m_leftMotor, m_rightMotor);
+    m_leftGroupMotor.setInverted(true);
+    m_myDrive    = new DifferentialDrive(m_leftGroupMotor, m_rightGroupMotor);
     m_joyStick   = new XboxController(0);
   }
 
