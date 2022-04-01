@@ -7,12 +7,12 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myDrive;
@@ -46,6 +46,18 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void robotPeriodic() {}
+
+  @Override
+  public void autonomousInit() {}
+
+  @Override
+  public void autonomousPeriodic() {}
+
+  @Override
+  public void teleopInit() {}
+
+  @Override
   public void teleopPeriodic() {
     // We introduced a damping factor because full-power made the robot
     // erratic and crab-like, due to unequal power from each side at
@@ -56,4 +68,17 @@ public class Robot extends TimedRobot {
     // on the Provo High carpeted field (in the wrestling gym).
     m_myDrive.tankDrive(m_joyStick.getLeftY()*0.85, m_joyStick.getRightY()*0.85);
   }
+
+  @Override
+  public void disabledInit() {}
+
+  @Override
+  public void disabledPeriodic() {}
+
+  @Override
+  public void testInit() {}
+
+  @Override
+  public void testPeriodic() {}
+
 }
