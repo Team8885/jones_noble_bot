@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -22,6 +23,7 @@ public class Robot extends TimedRobot {
   private Spark m_rearRightMotor;
   private MotorControllerGroup m_leftGroupMotor;
   private MotorControllerGroup m_rightGroupMotor;
+  private ADXRS450_Gyro m_gyro;
 
   @Override
   public void robotInit() {
@@ -33,6 +35,7 @@ public class Robot extends TimedRobot {
 
     m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
     m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+    m_gyro            = new ADXRS450_Gyro();
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. For our gearbox and chassis 
