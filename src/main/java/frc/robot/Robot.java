@@ -59,6 +59,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    double speed = m_joyStick.getRawAxis(1)*0.6;
+    double turn  = m_joyStick.getRawAxis(4)*0.3;
+
+    double left  = speed + turn;
+    double right = speed - turn;
     // We introduced a damping factor because full-power made the robot
     // erratic and crab-like, due to unequal power from each side at
     // maximum joystick travel.  The damping factor of 0.3 resulted in
@@ -66,7 +71,7 @@ public class Robot extends TimedRobot {
     // spot.  With both sides at 0.7, the robot slowly pulls to the right
     // moving away, but "calibration" will have to wait for some time
     // on the Provo High carpeted field (in the wrestling gym).
-    m_myDrive.tankDrive(m_joyStick.getLeftY()*0.85, m_joyStick.getRightY()*0.85);
+    m_myDrive.tankDrive(left, right);
   }
 
   @Override
