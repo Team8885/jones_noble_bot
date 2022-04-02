@@ -25,6 +25,9 @@ public class Robot extends TimedRobot {
   private MotorControllerGroup m_rightGroupMotor;
   private ADXRS450_Gyro m_gyro;
 
+  private static double kAngleSetpoint = 0.0;  // turn angle, relative to start 
+	private static final double kP = 0.005;      // propotional turning constant
+
   @Override
   public void robotInit() {
   
@@ -43,13 +46,20 @@ public class Robot extends TimedRobot {
     m_leftGroupMotor.setInverted(true);
     m_myDrive    = new DifferentialDrive(m_leftGroupMotor, m_rightGroupMotor);
     m_joyStick   = new XboxController(0);
+
+    // calibrate the gyro, assumes robot is stationary, facing where you want
+    m_gyro.calibrate();
+
   }
 
   @Override
   public void robotPeriodic() {}
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    m_gyro.reset();   // set to zero angle, remove any drift since boot-up
+
+  }
 
   @Override
   public void autonomousPeriodic() {}
@@ -64,14 +74,12 @@ public class Robot extends TimedRobot {
 
     double left  = speed + turn;
     double right = speed - turn;
-    // We introduced a damping factor because full-power made the robot
-    // erratic and crab-like, due to unequal power from each side at
-    // maximum joystick travel.  The damping factor of 0.3 resulted in
-    // NO movement, 0.6 was a slow crawl, and 0.7 to 1.0 was the sweet
-    // spot.  With both sides at 0.7, the robot slowly pulls to the right
-    // moving away, but "calibration" will have to wait for some time
-    // on the Provo High carpeted field (in the wrestling gym).
-    m_myDrive.tankDrive(left, right);
+
+    double turningValue = (kAngleSetpoint - m_gyro.getAngle()) * kP;
+		// Invert the direction of the turn if we are going backwards
+		turningValue = Math.copySign(turningValue, speed);
+		m_myDrive.arcadeDrive(speed, turningValue);
+    // m_myDrive.arcadeDrive(left, right);
   }
 
   @Override
