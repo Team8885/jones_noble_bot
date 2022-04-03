@@ -32,12 +32,12 @@ public class Robot extends TimedRobot {
   public void robotInit() {
   
     m_frontLeftMotor  = new Spark(0);
-    //m_rearLeftMotor   = new Spark(1);
-    m_frontRightMotor = new Spark(1);
-    //m_rearRightMotor  = new Spark(4);
+    m_rearLeftMotor   = new Spark(1);
+    m_frontRightMotor = new Spark(2);
+    m_rearRightMotor  = new Spark(3);
 
-    //m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
-    //m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+    m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
+    m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
     m_gyro            = new ADXRS450_Gyro();
 
     // We need to invert one side of the drivetrain so that positive voltages
@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
     // orientation, we need to invert the left side.
     //m_rightGroupMotor.setInverted(true);
     m_frontRightMotor.setInverted(true);
-    m_myDrive    = new DifferentialDrive(m_frontLeftMotor, m_frontRightMotor);
+    m_myDrive    = new DifferentialDrive(m_leftGroupMotor, m_rightGroupMotor);
     m_Stick      = new XboxController(0);
 
     // calibrate the gyro, assumes robot is stationary, facing where you want
