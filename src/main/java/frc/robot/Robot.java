@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myDrive;
-  private XboxController m_joyStick;
+  private XboxController m_Stick;
   private Spark m_frontLeftMotor;
   private Spark m_rearLeftMotor;
   private Spark m_frontRightMotor;
@@ -32,20 +32,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
   
     m_frontLeftMotor  = new Spark(0);
-    m_rearLeftMotor   = new Spark(1);
-    m_frontRightMotor = new Spark(2);
-    m_rearRightMotor  = new Spark(3);
+    //m_rearLeftMotor   = new Spark(1);
+    m_frontRightMotor = new Spark(1);
+    //m_rearRightMotor  = new Spark(4);
 
-    m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
-    m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+    //m_leftGroupMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
+    //m_rightGroupMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
     m_gyro            = new ADXRS450_Gyro();
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. For our gearbox and chassis 
     // orientation, we need to invert the left side.
-    m_leftGroupMotor.setInverted(true);
-    m_myDrive    = new DifferentialDrive(m_leftGroupMotor, m_rightGroupMotor);
-    m_joyStick   = new XboxController(0);
+    //m_rightGroupMotor.setInverted(true);
+    m_frontRightMotor.setInverted(true);
+    m_myDrive    = new DifferentialDrive(m_frontLeftMotor, m_frontRightMotor);
+    m_Stick      = new XboxController(0);
 
     // calibrate the gyro, assumes robot is stationary, facing where you want
     m_gyro.calibrate();
@@ -69,17 +70,18 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    double speed = m_joyStick.getRawAxis(1)*0.6;
-    double turn  = m_joyStick.getRawAxis(4)*0.3;
+    double speed = -m_Stick.getRawAxis(1);//*0.6;
+    double turn  = m_Stick.getRawAxis(4);//*0.3;
 
-    double left  = speed + turn;
-    double right = speed - turn;
+    //double left  = speed + turn;
+   //double right = speed - turn;
 
-    double turningValue = (kAngleSetpoint - m_gyro.getAngle()) * kP;
+    double turningValue = (kAngleSetpoint - m_gyro.getAngle()) * kP*10.0;
 		// Invert the direction of the turn if we are going backwards
 		turningValue = Math.copySign(turningValue, speed);
-		m_myDrive.arcadeDrive(speed, turningValue);
-    // m_myDrive.arcadeDrive(left, right);
+		//m_myDrive.arcadeDrive(-speed, turningValue);
+     //m_myDrive.arcadeDrive(speed, turn);
+     m_myDrive.arcadeDrive(speed, turningValue);
   }
 
   @Override
