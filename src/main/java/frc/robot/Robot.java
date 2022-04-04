@@ -53,4 +53,21 @@ public class Robot extends TimedRobot {
     // on the Provo High carpeted field (in the wrestling gym).
     m_myDrive.tankDrive(m_joyStick.getLeftY()*0.85, m_joyStick.getRightY()*0.85);
   }
+
+  @Override
+  public void autonomousInit() {
+    m_timer.reset();
+    m_timer.start();
+  }
+
+  @Override
+  public void autonomousPeriodic() {
+    if (m_timer.get() < 0.9) {
+     m_leftMotor1.set(-0.4);
+     m_rightMotor1.set(-0.4);
+    } else {
+      m_leftMotor1.set(0.0);
+      m_rightMotor1.set(0.0);
+  }
+}
 }
