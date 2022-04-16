@@ -10,22 +10,25 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-//import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Encoder;
 
 public class Robot extends TimedRobot {
   private DifferentialDrive m_myDrive;
   private XboxController m_Stick;
-  private Spark m_rightMotor;
-  private Spark m_leftMotor;
-  //private Spark m_frontRightMotor;
-  //private Spark m_rearRightMotor;
-  //private MotorControllerGroup m_leftGroupMotor;
-  //private MotorControllerGroup m_rightGroupMotor;
+  private Spark m_frontRightMotor;
+  private Spark m_frontLeftMotor;
+  private Spark m_rearRightMotor;
+  private Spark m_rearLeftMotor;
+  private MotorControllerGroup m_leftMotors;
+  private MotorControllerGroup m_rightMotors;
   private ADXRS450_Gyro m_gyro;
   private Timer m_timer;
+  private Encoder m_encoderLeft;
+  private Encoder m_encoderRight;
 
   private static double kAngleSetpoint = 0.0;  // turn angle, relative to start 
 	private static final double kP = 0.005;      // propotional turning constant
@@ -33,25 +36,37 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
   
-    m_leftMotor  = new Spark(0);
-    m_rightMotor   = new Spark(1);
-    //m_frontRightMotor = new Spark(2);
-    //m_rearRightMotor  = new Spark(3);
-    m_timer = new Timer();
-    //leftMotor  = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
-    //m_rightMotor = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+    m_frontLeftMotor  = new Spark(0);
+    m_rearLeftMotor   = new Spark(1);
+    m_frontRightMotor = new Spark(2);
+    m_rearRightMotor  = new Spark(3);
+    m_leftMotors      = new MotorControllerGroup(m_frontLeftMotor,  m_rearLeftMotor);
+    m_rightMotors     = new MotorControllerGroup(m_frontRightMotor, m_rearRightMotor);
+    m_myDrive         = new DifferentialDrive   (m_leftMotors,      m_rightMotors);
     m_gyro            = new ADXRS450_Gyro();
+    m_timer           = new Timer();
+    m_Stick           = new XboxController(0);
+    m_encoderLeft     = new Encoder(0,1);
+    m_encoderRight    = new Encoder(2,3);
 
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. For our gearbox and chassis 
     // orientation, we need to invert the left side.
-    //m_rightGroupMotor.setInverted(true);
-    m_rightMotor.setInverted(true);
-    m_myDrive    = new DifferentialDrive(m_leftMotor, m_rightMotor);
-    m_Stick      = new XboxController(0);
+    m_rightMotors.setInverted(true);
 
     // calibrate the gyro, assumes robot is stationary, facing where you want
     m_gyro.calibrate();
+
+    // initialize the left and right encoders
+    m_encoderLeft. setDistancePerPulse(4./256.);   // encoder returns 4 for every 256 pulses
+    m_encoderRight.setDistancePerPulse(4./256.);
+    m_encoderLeft. setMaxPeriod(.1);               // encoder stopped after .1 seconds
+    m_encoderRight.setMaxPeriod(.1); 
+    m_encoderLeft. setMinRate(10);                 // encoder stopped when its rate is below 10
+    m_encoderRight.setMinRate(10);
+    m_encoderLeft. setSamplesToAverage(5);         // encoder averages 5 samples
+    m_encoderRight.setSamplesToAverage(5);
+    m_encoderLeft. setReverseDirection(true);      // encoder direction reversed
 
   }
 
@@ -68,12 +83,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     if (m_timer.get() < 4.0) {
-     m_leftMotor.set(-0.4);
-     m_rightMotor.set(-0.4);
+     m_leftMotors.set(-0.4);
+     m_rightMotors.set(-0.4);
      m_myDrive.feed();
     } else {
-      m_leftMotor.set(0.0);
-      m_rightMotor.set(0.0);
+      m_leftMotors.set(0.0);
+      m_rightMotors.set(0.0);
       m_myDrive.feed();
   }
 }
@@ -84,7 +99,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     double speed = -m_Stick.getRawAxis(1);//*0.6;
-    double turn  = m_Stick.getRawAxis(4);//*0.3;
+    //double turn  = m_Stick.getRawAxis(4);//*0.3;
 
     //double left  = speed + turn;
    //double right = speed - turn;
